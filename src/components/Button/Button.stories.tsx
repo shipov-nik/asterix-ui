@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Button } from "./Button";
 import { Icon as IconComponent } from "../Icon";
 import { SvgIcon } from "../SvgIcon";
+import React from "react";
 
 const meta = {
   component: Button,

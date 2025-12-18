@@ -37,7 +37,12 @@ export const Sidebar: React.FC<SidebarProps> = (props) => {
         className,
       )}
     >
-      <div className={block("logo")}></div>
+      <div className={block("header")}>
+        <div className={block("logo")}></div>
+        <button className={block("toggle")} onClick={() => setCollapsed((prev) => !prev)}>
+          <Icon className={block("toggle-icon")} data={SvgIcon} />
+        </button>
+      </div>
       <ul className={block("list")}>
         {items.map((item, index) => (
           <Item
@@ -48,14 +53,6 @@ export const Sidebar: React.FC<SidebarProps> = (props) => {
             key={index}
           />
         ))}
-      </ul>
-      <ul className={block("footer")}>
-        <li>
-          <button className={block("toggle")} onClick={() => setCollapsed((prev) => !prev)}>
-            <Icon className={block("toggle-icon")} data={SvgIcon} />
-            <div className={block("toggle-label")}>Collapse menu</div>
-          </button>
-        </li>
       </ul>
     </nav>
   );

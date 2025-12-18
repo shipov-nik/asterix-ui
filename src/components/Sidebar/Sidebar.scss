@@ -3,6 +3,7 @@ $block: ".#{variables.$ns}sidebar";
 #{$block} {
   --list-padding: 0 12px;
   --toggle-padding: 10px 12px;
+  --header-padding: 24px;
 
   position: sticky;
   top: 0;
@@ -17,32 +18,31 @@ $block: ".#{variables.$ns}sidebar";
   &_collapsed {
     --list-padding: 0 8px;
     --toggle-padding: 10px;
+    --header-padding: 32px 18px;
 
     width: 56px;
+
+    & #{$block}__logo {
+      display: none;
+    }
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--header-padding);
   }
 
   &__logo {
-    height: 64px;
-  }
-
-  &__list,
-  &__footer {
-    padding: var(--list-padding);
-  }
-
-  &__footer {
-    margin-top: auto;
-    margin-bottom: 12px;
+    width: 172px;
+    height: 36px;
+    flex-shrink: 0;
   }
 
   &__toggle {
     display: flex;
-    width: 100%;
-    height: 40px;
     align-items: center;
-    padding: var(--toggle-padding);
-    border-radius: 8px;
-    column-gap: 12px;
     cursor: pointer;
 
     &-icon {
@@ -61,5 +61,15 @@ $block: ".#{variables.$ns}sidebar";
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+  }
+
+  &__list,
+  &__footer {
+    padding: var(--list-padding);
+  }
+
+  &__footer {
+    margin-top: auto;
+    margin-bottom: 12px;
   }
 }
