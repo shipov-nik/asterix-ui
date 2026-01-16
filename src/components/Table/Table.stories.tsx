@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Table } from "./Table";
 import { ColumnsType } from "./types";
+import React from "react";
 
 const meta = {
   component: Table,
@@ -112,5 +113,23 @@ export const Default: Story = {
 export const Empty: Story = {
   render: () => {
     return <Table data={[]} columns={columns} rowKey="id" />;
+  },
+};
+
+export const Selection: Story = {
+  render: () => {
+    return (
+      <Table
+        data={data}
+        columns={columns}
+        rowKey="id"
+        rowSelection={{
+          selectedRowKeys: [],
+          onChange: (keys) => {
+            console.log("Выбранные ключи:", keys);
+          },
+        }}
+      />
+    );
   },
 };

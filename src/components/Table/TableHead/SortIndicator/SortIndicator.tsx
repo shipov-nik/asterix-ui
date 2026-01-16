@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { table } from "../../Table";
+import { table } from "../../utils/cn";
 import { useTableContext } from "../../TableContext";
 import { SortDirection } from "../../types";
 
@@ -11,7 +11,7 @@ export const SortIndicator: React.FC<{ columnKey: string }> = ({ columnKey }) =>
     if (sorting.direction === SortDirection.ASC) return "↑";
     if (sorting.direction === SortDirection.DESC) return "↓";
     return "⇅";
-  }, [columnKey, sorting]);
+  }, [columnKey, sorting.key, sorting.direction]);
 
   return <span className={table("sort-indicator")}>{indicator}</span>;
 };

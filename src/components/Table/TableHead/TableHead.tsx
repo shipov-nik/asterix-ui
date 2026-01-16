@@ -1,18 +1,38 @@
 import React from "react";
 import { useTableContext } from "../TableContext";
-import { table } from "../Table";
+import { table } from "../utils/cn";
 import { SortIndicator } from "./SortIndicator";
+import { Checkbox } from "../../Checkbox";
 
 export const TableHead: React.FC = () => {
-  const { columns, sorting, handleChangeSorting } = useTableContext();
+  const {
+    columns,
+    sorting,
+    handleChangeSorting,
+    rowSelection,
+    isAllRowsSelected,
+    isIndeterminate,
+    toggleAllRowsSelection,
+  } = useTableContext();
 
   return (
     <thead className={table("head")}>
       <tr className={table("row")}>
-        {columns?.map((column, index) => {
+        {rowSelection && (
+          <th className={table("cell", { align: "center" })}>
+            <div className={table("checkbox")}>
+              <Checkbox
+                checked={isAllRowsSelected || false}
+                indeterminate={isIndeterminate}
+                onChange={toggleAllRowsSelection}
+              />
+            </div>
+          </th>
+        )}
+        {columns?.map((column) => {
           const { align, title, sorter, key } = column;
           return (
-            <th className={table("cell", { align })} key={index}>
+            <th className={table("cell", { align })} key={key}>
               {sorter ? (
                 <div
                   className={table("sort", {

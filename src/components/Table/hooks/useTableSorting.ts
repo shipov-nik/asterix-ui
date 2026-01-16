@@ -1,15 +1,32 @@
 import { useCallback, useMemo, useState } from "react";
-import {
-  ColumnsType,
-  DefaultRecordType,
-  SortDirection,
-  SortDirectionType,
-  SortState,
-} from "../types";
+import { ColumnsType, DefaultRecordType, SortDirection, SortState, CompareFn } from "../types";
 
 type UseTableSortingProps<RecordType> = {
   data?: RecordType[];
   columns?: ColumnsType<RecordType>;
+};
+
+const defaultCompare = <RecordType extends DefaultRecordType>(
+  a: RecordType,
+  b: RecordType,
+  key: string,
+): number => {
+  const aValue = a[key];
+  const bValue = b[key];
+
+  if (aValue === bValue) return 0;
+  if (aValue == null) return 1;
+  if (bValue == null) return -1;
+
+  if (typeof aValue === "string" && typeof bValue === "string") {
+    return aValue.localeCompare(bValue);
+  }
+
+  if (typeof aValue === "number" && typeof bValue === "number") {
+    return aValue - bValue;
+  }
+
+  return String(aValue).localeCompare(String(bValue));
 };
 
 export const useTableSorting = <RecordType extends DefaultRecordType>(
@@ -22,38 +39,49 @@ export const useTableSorting = <RecordType extends DefaultRecordType>(
     direction: null,
   });
 
+  // Мемоизируем Map колонок для быстрого поиска O(1) вместо O(n)
+  const columnsMap = useMemo(() => {
+    if (!columns) return null;
+    return new Map(columns.map((col) => [col.key, col]));
+  }, [columns]);
+
   const sortedData = useMemo(() => {
-    const sortedData = data ? [...data] : [];
-
-    if (sorting.key) {
-      const sorter = columns?.find((column) => column.key === sorting.key)?.sorter;
-
-      if (typeof sorter === "boolean") {
-        // Если column.sorter = boolean
-        return sortedData;
-      } else if (typeof sorter === "function") {
-        // Если column.sorter = CompareFn
-        return sortedData.sort(
-          (a, b) => sorter(a, b) * (sorting.direction === SortDirection.ASC ? 1 : -1),
-        );
-      }
+    // Ранний выход если нет данных или сортировки
+    if (!data || data.length === 0 || !sorting.key || !sorting.direction) {
+      return data || [];
     }
+
+    // Быстрый поиск колонки через Map
+    const column = columnsMap?.get(sorting.key);
+    if (!column || !column.sorter) {
+      return data;
+    }
+
+    // Создаем копию только когда действительно нужно сортировать
+    const sortedData = [...data];
+    const sortMultiplier = sorting.direction === SortDirection.ASC ? 1 : -1;
+
+    if (typeof column.sorter === "function") {
+      const compareFn = column.sorter as CompareFn<RecordType>;
+      sortedData.sort((a, b) => compareFn(a, b) * sortMultiplier);
+    } else if (column.sorter === true) {
+      sortedData.sort((a, b) => defaultCompare(a, b, sorting.key!) * sortMultiplier);
+    }
+
     return sortedData;
-  }, [columns, data, sorting]);
+  }, [data, columnsMap, sorting.key, sorting.direction]);
 
   const handleChangeSorting = useCallback((key: string) => {
     setSorting((prev) => {
-      let direction: SortDirectionType = null;
-
       if (prev.key !== key) {
-        direction = SortDirection.ASC;
-      } else if (prev.direction === SortDirection.ASC) {
-        direction = SortDirection.DESC;
-      } else if (prev.direction === SortDirection.DESC) {
-        direction = null;
+        return { key, direction: SortDirection.ASC };
       }
 
-      return direction === null ? { key: null, direction: null } : { key, direction };
+      if (prev.direction === SortDirection.ASC) {
+        return { key, direction: SortDirection.DESC };
+      }
+
+      return { key: null, direction: null };
     });
   }, []);
 

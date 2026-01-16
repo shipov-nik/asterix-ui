@@ -17,8 +17,5 @@ export const getWeekDaysNames = (firstWeekDay: number, locale: string) => {
     weekDaysNames[dayNumberInWeek] = { day, dayShort };
   });
 
-  return [
-    ...weekDaysNames.slice(firstWeekDay),
-    ...weekDaysNames.slice(0, firstWeekDay),
-  ];
+  return [...weekDaysNames.slice(firstWeekDay), ...weekDaysNames.slice(0, firstWeekDay)];
 };
