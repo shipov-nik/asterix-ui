@@ -9,6 +9,9 @@ const preview: Preview = {
   decorators: [WithTheme],
 
   parameters: {
+    controls: {
+      expanded: true,
+    },
     docs: {
       theme: themes.light,
     },
