@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { DefaultRecordType, RowSelection } from "../types";
+import { getRowKey } from "../utils/getRowKey";
 
 type UseRowSelectionProps<RecordType> = {
   data?: RecordType[];
@@ -23,75 +24,53 @@ export const useRowSelection = <RecordType extends DefaultRecordType>(
     }
   }, [rowSelection?.selectedRowKeys]);
 
-  // Получение ключа строки
-  const getRowKey = useCallback(
-    (row: RecordType, index: number): string | number => {
-      if (typeof rowKey === "string") {
-        const keyValue = row[rowKey];
-        return keyValue !== undefined && keyValue !== null ? String(keyValue) : `row-${index}`;
-      }
-      if (rowKey) {
-        const keyValue = row[rowKey];
-        return keyValue !== undefined && keyValue !== null ? String(keyValue) : `row-${index}`;
-      }
-      return row.key !== undefined && row.key !== null ? String(row.key) : `row-${index}`;
-    },
-    [rowKey],
-  );
-
   // Проверка, выбрана ли строка
   const isRowSelected = useCallback(
     (row: RecordType, index: number): boolean => {
-      const key = getRowKey(row, index);
+      const key = getRowKey(row, index, rowKey);
       return selectedRowKeys.includes(key);
     },
-    [selectedRowKeys, getRowKey],
+    [selectedRowKeys, rowKey],
   );
 
   // Переключение выбора строки
   const toggleRowSelection = useCallback(
     (row: RecordType, index: number) => {
-      const key = getRowKey(row, index);
+      const key = getRowKey(row, index, rowKey);
       setSelectedRowKeys((prev) => {
         const newKeys = prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key];
-
-        // Вызываем коллбэк onChange
         rowSelection?.onChange?.(newKeys);
-
         return newKeys;
       });
     },
-    [getRowKey, rowSelection],
+    [rowKey, rowSelection],
   );
 
-  // Получение всех ключей строк
-  const getAllRowKeys = useMemo(() => {
+  // Все ключи строк
+  const allRowKeys = useMemo(() => {
     if (!data) return [];
-    return data.map((row, index) => getRowKey(row, index));
-  }, [data, getRowKey]);
+    return data.map((row, index) => getRowKey(row, index, rowKey));
+  }, [data, rowKey]);
 
   // Проверка, выбраны ли все строки
   const isAllRowsSelected = useMemo(() => {
     if (!data || data.length === 0) return false;
-    return getAllRowKeys.length > 0 && getAllRowKeys.every((key) => selectedRowKeys.includes(key));
-  }, [getAllRowKeys, selectedRowKeys, data]);
+    return allRowKeys.length > 0 && allRowKeys.every((key) => selectedRowKeys.includes(key));
+  }, [allRowKeys, selectedRowKeys, data]);
 
   // Проверка, выбрана ли хотя бы одна строка (для indeterminate состояния)
   const isIndeterminate = useMemo(() => {
     if (!data || data.length === 0) return false;
-    const selectedCount = getAllRowKeys.filter((key) => selectedRowKeys.includes(key)).length;
-    return selectedCount > 0 && selectedCount < getAllRowKeys.length;
-  }, [getAllRowKeys, selectedRowKeys, data]);
+    const selectedCount = allRowKeys.filter((key) => selectedRowKeys.includes(key)).length;
+    return selectedCount > 0 && selectedCount < allRowKeys.length;
+  }, [allRowKeys, selectedRowKeys, data]);
 
   // Переключение выбора всех строк
   const toggleAllRowsSelection = useCallback(() => {
-    const newKeys = isAllRowsSelected ? [] : getAllRowKeys;
-
+    const newKeys = isAllRowsSelected ? [] : allRowKeys;
     setSelectedRowKeys(newKeys);
-
-    // Вызываем коллбэк onChange
     rowSelection?.onChange?.(newKeys);
-  }, [isAllRowsSelected, getAllRowKeys, rowSelection]);
+  }, [isAllRowsSelected, allRowKeys, rowSelection]);
 
   return {
     selectedRowKeys,

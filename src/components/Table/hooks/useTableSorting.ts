@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { ColumnsType, DefaultRecordType, SortDirection, SortState, CompareFn } from "../types";
+import { ColumnsType, DefaultRecordType, SortDirection, type SortState, CompareFn } from "../types";
 
 type UseTableSortingProps<RecordType> = {
   data?: RecordType[];
