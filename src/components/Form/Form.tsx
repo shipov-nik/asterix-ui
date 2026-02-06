@@ -1,6 +1,6 @@
 import { useForm, FormProvider, useWatch, UseFormReturn, FieldValues } from "react-hook-form";
 import { cn } from "../utils/cn";
-import { Field } from "./Field";
+import { Field } from "./components";
 import "./Form.scss";
 
 type BaseFormProps = Omit<React.FormHTMLAttributes<HTMLFormElement>, "onSubmit">;
@@ -12,18 +12,17 @@ export type FormProps<T extends FieldValues> = BaseFormProps & {
 
 const block = cn("form");
 
-export const Form = <T extends Record<string, unknown>>(props: FormProps<T>) => {
+export const Form = <T extends FieldValues>(props: FormProps<T>) => {
   const { children, className, form, onSubmit, ...attrs } = props;
 
   const methods = useForm<T>();
-
   const providerProps = form ?? methods;
 
   return (
     <FormProvider {...providerProps}>
       <form
         className={block({}, className)}
-        onSubmit={onSubmit && providerProps.handleSubmit(onSubmit)}
+        onSubmit={onSubmit ? providerProps.handleSubmit(onSubmit) : undefined}
         {...attrs}
       >
         {children}
