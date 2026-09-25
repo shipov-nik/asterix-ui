@@ -27,10 +27,10 @@ export const Icon: React.FC<IconProps> = (props) => {
 
   // SVG as React component
   if (typeof data === "function") {
-    const el = data({}) as React.ReactElement;
+    const el = data({}) as React.ReactElement<{ viewBox?: string }>;
 
     if (el) {
-      ({ viewBox } = el.props);
+      viewBox = el.props.viewBox;
     }
   }
 

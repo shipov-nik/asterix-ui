@@ -46,13 +46,18 @@ export const Tooltip: React.FC<TooltipProps> = (props) => {
     timeoutRef.current = window.setTimeout(() => setVisible(false), closeDelay);
   };
 
-  const anchorNode = cloneElement(children, {
-    ref: setAnchorElement,
-    onMouseEnter: handleMouseEnter,
-    onMouseLeave: handleMouseLeave,
-    onFocus: () => setVisible(true),
-    onBlur: () => setVisible(false),
-  });
+  const anchorNode = cloneElement(
+    children as React.ReactElement<
+      React.HTMLAttributes<HTMLElement> & { ref?: React.Ref<HTMLElement> }
+    >,
+    {
+      ref: setAnchorElement,
+      onMouseEnter: handleMouseEnter,
+      onMouseLeave: handleMouseLeave,
+      onFocus: () => setVisible(true),
+      onBlur: () => setVisible(false),
+    },
+  );
 
   return (
     <>

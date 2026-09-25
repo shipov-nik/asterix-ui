@@ -6,7 +6,7 @@ import "./Form.scss";
 type BaseFormProps = Omit<React.FormHTMLAttributes<HTMLFormElement>, "onSubmit">;
 
 export type FormProps<T extends FieldValues> = BaseFormProps & {
-  form?: UseFormReturn<T, unknown, undefined>;
+  form?: UseFormReturn<T>;
   onSubmit?: (data: T, event?: React.BaseSyntheticEvent) => void;
 };
 

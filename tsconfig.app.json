@@ -5,10 +5,11 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
-    "baseUrl": "src",
     "paths": {
-      "components/*": ["components/*"],
-      "hooks/*": ["hooks/*"]
+      "components": ["./src/components/index.ts"],
+      "components/*": ["./src/components/*"],
+      "hooks": ["./src/hooks/index.ts"],
+      "hooks/*": ["./src/hooks/*"]
     },
 
     /* Bundler mode */

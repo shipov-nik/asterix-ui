@@ -56,11 +56,16 @@ export const Dropdown: React.FC<DropdownProps> = (props) => {
 
   return (
     <>
-      {cloneElement(children, {
-        ref: setAnchorElement,
-        onClick: () => handleChangeVisible(visible ? false : true),
-        onKeyUp: handleKeyUp,
-      })}
+      {cloneElement(
+        children as React.ReactElement<
+          React.HTMLAttributes<HTMLElement> & { ref?: React.Ref<HTMLElement> }
+        >,
+        {
+          ref: setAnchorElement,
+          onClick: () => handleChangeVisible(visible ? false : true),
+          onKeyUp: handleKeyUp,
+        },
+      )}
       <Popup
         anchorElement={anchorElement}
         placement={placement}

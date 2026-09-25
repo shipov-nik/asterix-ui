@@ -7,11 +7,9 @@ import dts from "vite-plugin-dts";
 
 // https://vitejs.dev/config/
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 import { playwright } from "@vitest/browser-playwright";
-const dirname =
-  typeof __dirname !== "undefined" ? __dirname : path.dirname(fileURLToPath(import.meta.url));
+const dirname = import.meta.dirname;
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
@@ -23,11 +21,11 @@ export default defineConfig({
   },
   build: {
     lib: {
-      entry: resolve(__dirname, "src/components/index.ts"),
+      entry: resolve(dirname, "src/components/index.ts"),
       name: "AsterixUi",
       fileName: "asterixui",
     },
-    rollupOptions: {
+    rolldownOptions: {
       external: ["react"],
       output: {
         globals: {
@@ -40,7 +38,6 @@ export default defineConfig({
     preprocessorOptions: {
       scss: {
         additionalData: `@use "components/variables";`,
-        api: "modern-compiler",
       },
     },
   },
@@ -51,7 +48,7 @@ export default defineConfig({
       relativeCSSInjection: false,
     }),
     dts({
-      tsconfigPath: resolve(__dirname, "tsconfig.app.json"),
+      tsconfigPath: resolve(dirname, "tsconfig.app.json"),
       insertTypesEntry: true,
     }),
   ],
